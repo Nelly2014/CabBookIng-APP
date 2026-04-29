@@ -1,1 +1,107 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CabBooking API</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700&family=DM+Sans:wght@300;400;500&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #0f0f1a; color: #fff; min-height: 100vh; }
+    header { background: #0f0f1a; border-bottom: 1px solid rgba(255,255,255,0.08); padding: 1.5rem 2rem; display: flex; align-items: center; gap: 12px; }
+    .logo { width: 40px; height: 40px; background: #f5a623; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .logo-text { font-family: 'Syne', sans-serif; font-size: 1.3rem; color: white; }
+    .badge { margin-left: auto; background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); padding: 4px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 500; }
+    .hero { text-align: center; padding: 4rem 2rem 3rem; background: radial-gradient(ellipse at top, rgba(245,166,35,0.08) 0%, transparent 60%); }
+    .hero h1 { font-family: 'Syne', sans-serif; font-size: 2.8rem; margin-bottom: 1rem; background: linear-gradient(135deg, #fff 0%, #f5a623 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { color: rgba(255,255,255,0.5); font-size: 1rem; font-weight: 300; max-width: 500px; margin: 0 auto 2rem; }
+    .base-url { display: inline-block; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem 1.2rem; font-family: monospace; font-size: 0.85rem; color: #f5a623; }
+    .container { max-width: 860px; margin: 0 auto; padding: 2rem; }
+    .section-title { font-family: 'Syne', sans-serif; font-size: 1rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+    .endpoints { display: flex; flex-direction: column; gap: 12px; margin-bottom: 3rem; }
+    .endpoint { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1rem; transition: border-color 0.2s, background 0.2s; cursor: pointer; }
+    .endpoint:hover { border-color: rgba(245,166,35,0.4); background: rgba(245,166,35,0.05); }
+    .method { font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; min-width: 52px; text-align: center; letter-spacing: 0.05em; }
+    .get  { background: rgba(34,197,94,0.15);  color: #22c55e; }
+    .post { background: rgba(245,166,35,0.15); color: #f5a623; }
+    .endpoint-info { flex: 1; }
+    .endpoint-path { font-family: monospace; font-size: 0.9rem; color: white; margin-bottom: 3px; }
+    .endpoint-desc { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+    .try-btn { font-size: 0.78rem; color: rgba(255,255,255,0.3); background: none; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 5px 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+    .try-btn:hover { color: #f5a623; border-color: #f5a623; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 3rem; }
+    .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.25rem; text-align: center; }
+    .stat-value { font-family: 'Syne', sans-serif; font-size: 1.8rem; color: #f5a623; margin-bottom: 4px; }
+    .stat-label { font-size: 0.78rem; color: rgba(255,255,255,0.4); }
+    .result-box { background: #0a0a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 1rem 1.25rem; font-family: monospace; font-size: 0.85rem; color: #22c55e; min-height: 60px; margin-top: 1rem; white-space: pre-wrap; word-break: break-all; display: none; }
+    footer { text-align: center; padding: 2rem; color: rgba(255,255,255,0.2); font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.06); }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">🚕</div>
+  <span class="logo-text">CabBooking API</span>
+  <span class="badge">● Live</span>
+</header>
+<div class="hero">
+  <h1>CabBooking REST API</h1>
+  <p>A Spring Boot REST API for booking cabs and calculating fares. Built and deployed by Neliswa.</p>
+  <div class="base-url">https://cabbooking-app-production.up.railway.app</div>
+</div>
+<div class="container">
+  <div class="stats">
+    <div class="stat-card"><div class="stat-value">5</div><div class="stat-label">Endpoints</div></div>
+    <div class="stat-card"><div class="stat-value">3</div><div class="stat-label">Cab Types</div></div>
+    <div class="stat-card"><div class="stat-value" id="live-status">...</div><div class="stat-label">API Status</div></div>
+  </div>
+  <p class="section-title">Available Endpoints</p>
+  <div class="endpoints">
+    <div class="endpoint" onclick="tryEndpoint('/cab/health','GET')">
+      <span class="method get">GET</span>
+      <div class="endpoint-info"><div class="endpoint-path">/cab/health</div><div class="endpoint-desc">Check if the API is running</div></div>
+      <button class="try-btn">Try it</button>
+    </div>
+    <div class="endpoint" onclick="tryEndpoint('/cab/bookings','GET')">
+      <span class="method get">GET</span>
+      <div class="endpoint-info"><div class="endpoint-path">/cab/bookings</div><div class="endpoint-desc">Get all bookings</div></div>
+      <button class="try-btn">Try it</button>
+    </div>
+    <div class="endpoint" onclick="tryEndpoint('/cab/bookings/1','GET')">
+      <span class="method get">GET</span>
+      <div class="endpoint-info"><div class="endpoint-path">/cab/bookings/{id}</div><div class="endpoint-desc">Get a specific booking by ID</div></div>
+      <button class="try-btn">Try it</button>
+    </div>
+    <div class="endpoint" onclick="tryEndpoint('/cab/fare?distanceKm=10&typeOfCab=1','GET')">
+      <span class="method get">GET</span>
+      <div class="endpoint-info"><div class="endpoint-path">/cab/fare?distanceKm=10&typeOfCab=1</div><div class="endpoint-desc">Calculate fare — 1=Standard R10/km, 2=Comfort R15/km, 3=Luxury R25/km</div></div>
+      <button class="try-btn">Try it</button>
+    </div>
+    <div class="endpoint" onclick="tryEndpoint('/cab/booking?from=Sandton&to=Soweto&typeOfCab=1&distanceKm=25','POST')">
+      <span class="method post">POST</span>
+      <div class="endpoint-info"><div class="endpoint-path">/cab/booking?from=Sandton&to=Soweto&typeOfCab=1&distanceKm=25</div><div class="endpoint-desc">Book a cab — provide from, to, typeOfCab, distanceKm</div></div>
+      <button class="try-btn">Try it</button>
+    </div>
+  </div>
+  <div id="result" class="result-box"></div>
+</div>
+<footer>Built with Spring Boot · Deployed on Railway · CabBooking API © 2026</footer>
+<script>
+  async function tryEndpoint(path, method) {
+    const box = document.getElementById('result');
+    box.style.display = 'block';
+    box.style.color = '#f5a623';
+    box.textContent = 'Loading...';
+    try {
+      const res = await fetch(path, { method });
+      const text = await res.text();
+      try { box.style.color = '#22c55e'; box.textContent = JSON.stringify(JSON.parse(text), null, 2); }
+      catch { box.style.color = '#22c55e'; box.textContent = text; }
+    } catch(e) { box.style.color = '#ef4444'; box.textContent = 'Error: ' + e.message; }
+  }
+  fetch('/cab/health').then(r => r.json())
+    .then(() => { document.getElementById('live-status').textContent = '✓'; document.getElementById('live-status').style.color = '#22c55e'; })
+    .catch(() => { document.getElementById('live-status').textContent = '✗'; document.getElementById('live-status').style.color = '#ef4444'; });
+</script>
+</body>
+</html>
