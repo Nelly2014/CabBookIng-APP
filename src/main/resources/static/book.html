@@ -1,1 +1,498 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Cab — CabBooking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #f5a623;
+      --gold-light: #fbbf24;
+      --gold-dim: rgba(245,166,35,0.12);
+      --bg: #0f0f1a;
+      --surface: rgba(255,255,255,0.03);
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.13);
+      --text: #fff;
+      --text2: rgba(255,255,255,0.45);
+      --text3: rgba(255,255,255,0.2);
+      --green: #22c55e;
+      --red: #ef4444;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 2rem;
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .logo {
+      width: 38px; height: 38px;
+      background: var(--gold); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem; color: var(--text);
+    }
+
+    .hero {
+      text-align: center;
+      padding: 3.5rem 1.5rem 2.5rem;
+      background: radial-gradient(ellipse at top, rgba(245,166,35,0.07) 0%, transparent 60%);
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 800; line-height: 1.15;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, #fff 0%, var(--gold) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .hero p { color: var(--text2); font-size: 0.95rem; font-weight: 300; }
+
+    .wrap {
+      max-width: 580px; margin: 0 auto;
+      padding: 0 1.25rem 4rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .card-head {
+      padding: 1.1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .card-head-icon {
+      width: 30px; height: 30px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(245,166,35,0.22);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+    }
+
+    .card-head-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; }
+    .card-head-sub { font-size: 0.75rem; color: var(--text2); }
+    .card-body { padding: 1.5rem; }
+
+    .slabel {
+      font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text3); margin-bottom: 0.75rem;
+    }
+
+    .cab-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px; margin-bottom: 1.5rem;
+    }
+
+    .cab-tile {
+      background: rgba(255,255,255,0.02);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 8px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.18s;
+      position: relative;
+    }
+
+    .cab-tile:hover { border-color: rgba(245,166,35,0.3); background: rgba(245,166,35,0.03); transform: translateY(-2px); }
+    .cab-tile.active { border-color: var(--gold); background: rgba(245,166,35,0.06); }
+
+    .cab-check {
+      position: absolute; top: 6px; right: 6px;
+      width: 15px; height: 15px;
+      background: var(--gold); border-radius: 50%;
+      display: none; align-items: center; justify-content: center;
+      font-size: 8px; color: #000; font-weight: 800;
+    }
+
+    .cab-tile.active .cab-check { display: flex; }
+    .cab-emoji { font-size: 26px; display: block; margin-bottom: 6px; }
+    .cab-name { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .cab-rate { font-size: 10px; color: var(--text2); }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    label { display: block; font-size: 0.72rem; font-weight: 500; color: var(--text2); margin-bottom: 5px; }
+
+    input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border2);
+      border-radius: 9px;
+      padding: 10px 13px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border 0.18s, box-shadow 0.18s;
+      -webkit-appearance: none;
+    }
+
+    input::placeholder { color: rgba(255,255,255,0.18); }
+    input:focus { border-color: rgba(245,166,35,0.45); box-shadow: 0 0 0 3px rgba(245,166,35,0.07); }
+
+    .fare-box {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      margin-bottom: 1rem;
+      display: none;
+      animation: popIn 0.22s ease;
+    }
+
+    .fare-box.show { display: block; }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fare-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .fare-amount { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--gold); line-height: 1; }
+    .fare-sublabel { font-size: 0.68rem; color: var(--text3); margin-bottom: 3px; }
+    .fare-row { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 3px 0; border-top: 1px solid var(--border); }
+    .fare-row span:first-child { color: var(--text2); }
+    .fare-row span:last-child { color: var(--text); font-weight: 500; }
+
+    .alert {
+      padding: 10px 13px; border-radius: 8px;
+      font-size: 0.78rem; font-weight: 500;
+      margin-bottom: 1rem; display: none;
+    }
+
+    .alert.show { display: block; }
+    .alert.success { background: rgba(34,197,94,0.1);  color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+    .alert.error   { background: rgba(239,68,68,0.1);  color: var(--red);   border: 1px solid rgba(239,68,68,0.2); }
+    .alert.loading { background: var(--gold-dim);       color: var(--gold);  border: 1px solid rgba(245,166,35,0.2); }
+
+    .btn-calc {
+      width: 100%;
+      background: transparent;
+      border: 1px solid rgba(245,166,35,0.3);
+      border-radius: 9px;
+      color: var(--gold);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem; font-weight: 500;
+      padding: 10px;
+      cursor: pointer;
+      transition: all 0.18s;
+      margin-bottom: 0.75rem;
+    }
+
+    .btn-calc:hover { background: var(--gold-dim); border-color: var(--gold); }
+
+    .btn-book {
+      width: 100%;
+      background: var(--gold);
+      border: none; border-radius: 11px;
+      color: #0f0f1a;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem; font-weight: 700;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .btn-book:hover:not(:disabled) {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(245,166,35,0.22);
+    }
+
+    .btn-book:disabled { background: rgba(255,255,255,0.07); color: var(--text3); cursor: not-allowed; }
+
+    .confirm {
+      background: rgba(34,197,94,0.04);
+      border: 1px solid rgba(34,197,94,0.18);
+      border-radius: 14px;
+      padding: 1.25rem;
+      margin-top: 1rem;
+      display: none;
+      animation: popIn 0.3s ease;
+    }
+
+    .confirm.show { display: block; }
+
+    .confirm-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem; font-weight: 700;
+      color: var(--green);
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 0.9rem;
+    }
+
+    .confirm-icon {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+    }
+
+    .confirm-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.78rem; padding: 4px 0;
+      border-bottom: 1px solid rgba(34,197,94,0.06);
+    }
+
+    .confirm-row:last-of-type { border: none; }
+    .confirm-row span:first-child { color: var(--text2); }
+    .confirm-row span:last-child  { color: rgba(209,250,229,1); font-weight: 500; }
+    .confirm-row .gold { color: var(--gold); }
+    .booking-id { margin-top: 10px; text-align: center; font-size: 0.68rem; color: var(--text3); font-family: monospace; }
+
+    footer { text-align: center; padding: 1.5rem; font-size: 0.75rem; color: var(--text3); border-top: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🚕</div>
+  <span class="logo-text">CabBooking</span>
+</header>
+
+<div class="hero">
+  <h1>Book Your Ride</h1>
+  <p>Choose a cab, enter your route and distance — done.</p>
+</div>
+
+<div class="wrap">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-head-icon">🗺️</div>
+      <div>
+        <div class="card-head-title">New Booking</div>
+        <div class="card-head-sub">Fast, easy, reliable</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="slabel">Select cab type</div>
+      <div class="cab-grid">
+        <div class="cab-tile" onclick="selectCab(1, this)">
+          <span class="cab-check">✓</span>
+          <span class="cab-emoji">🚗</span>
+          <div class="cab-name">Standard</div>
+          <div class="cab-rate">R10/km</div>
+        </div>
+        <div class="cab-tile" onclick="selectCab(2, this)">
+          <span class="cab-check">✓</span>
+          <span class="cab-emoji">🚙</span>
+          <div class="cab-name">Comfort</div>
+          <div class="cab-rate">R15/km</div>
+        </div>
+        <div class="cab-tile" onclick="selectCab(3, this)">
+          <span class="cab-check">✓</span>
+          <span class="cab-emoji">🏎️</span>
+          <div class="cab-name">Luxury</div>
+          <div class="cab-rate">R25/km</div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="slabel">Trip details</div>
+
+      <div class="form-row-2" style="margin-bottom:1rem;">
+        <div class="form-group">
+          <label for="from">Pickup location</label>
+          <input type="text" id="from" placeholder="e.g. Sandton" />
+        </div>
+        <div class="form-group">
+          <label for="to">Drop-off location</label>
+          <input type="text" id="to" placeholder="e.g. Soweto" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="distance">Distance (km)</label>
+        <input type="number" id="distance" placeholder="e.g. 25" min="1" step="0.5" />
+      </div>
+
+      <button class="btn-calc" onclick="calcFare()">📊 Get fare estimate</button>
+
+      <div class="fare-box" id="fareBox">
+        <div class="fare-top">
+          <div>
+            <div class="fare-sublabel">Estimated fare</div>
+            <div class="fare-amount" id="fareAmt">R0</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="fare-sublabel">Cab</div>
+            <div style="font-size:0.88rem;font-weight:600;color:var(--text);" id="fareCab">—</div>
+          </div>
+        </div>
+        <div class="fare-row"><span>Rate per km</span><span id="fareRate">—</span></div>
+        <div class="fare-row"><span>Distance</span><span id="fareKm">—</span></div>
+        <div class="fare-row"><span>Total</span><span id="fareTotal" style="color:var(--gold);">—</span></div>
+      </div>
+
+      <div class="alert" id="alertBox"></div>
+
+      <button class="btn-book" id="bookBtn" disabled onclick="bookCab()">Select a cab type to continue</button>
+
+      <div class="confirm" id="confirmBox">
+        <div class="confirm-title">
+          <div class="confirm-icon">✓</div>
+          Booking confirmed!
+        </div>
+        <div class="confirm-row"><span>From</span><span id="cFrom">—</span></div>
+        <div class="confirm-row"><span>To</span><span id="cTo">—</span></div>
+        <div class="confirm-row"><span>Cab type</span><span id="cCab">—</span></div>
+        <div class="confirm-row"><span>Distance</span><span id="cDist">—</span></div>
+        <div class="confirm-row"><span>Fare</span><span id="cFare" class="gold">—</span></div>
+        <div class="booking-id" id="cId"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>Built with Spring Boot · Deployed on Railway · CabBooking © 2026</footer>
+
+<script>
+  const CAB_INFO = {
+    1: { name: 'Standard', rate: 10, emoji: '🚗' },
+    2: { name: 'Comfort',  rate: 15, emoji: '🚙' },
+    3: { name: 'Luxury',   rate: 25, emoji: '🏎️' },
+  };
+
+  let selectedType = null;
+
+  function selectCab(type, el) {
+    document.querySelectorAll('.cab-tile').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    selectedType = type;
+    const btn = document.getElementById('bookBtn');
+    btn.disabled = false;
+    btn.textContent = `Book ${CAB_INFO[type].name} ${CAB_INFO[type].emoji}`;
+    if (document.getElementById('distance').value) calcFare();
+    clearAlert();
+  }
+
+  async function calcFare() {
+    const dist = parseFloat(document.getElementById('distance').value);
+    if (!selectedType) { showAlert('Please select a cab type first.', 'error'); return; }
+    if (!dist || dist <= 0) { showAlert('Enter a valid distance in km.', 'error'); return; }
+    try {
+      const res = await fetch(`/cab/fare?distanceKm=${dist}&typeOfCab=${selectedType}`);
+      const data = await res.json();
+      const fareVal = typeof data === 'number' ? data : (data.fare ?? data.amount ?? data.total ?? CAB_INFO[selectedType].rate * dist);
+      showFare(fareVal, dist);
+    } catch {
+      showFare(CAB_INFO[selectedType].rate * dist, dist);
+    }
+    clearAlert();
+  }
+
+  function showFare(total, dist) {
+    const info = CAB_INFO[selectedType];
+    document.getElementById('fareBox').classList.add('show');
+    document.getElementById('fareAmt').textContent   = `R${Number(total).toFixed(2)}`;
+    document.getElementById('fareCab').textContent   = info.name;
+    document.getElementById('fareRate').textContent  = `R${info.rate}/km`;
+    document.getElementById('fareKm').textContent    = `${dist} km`;
+    document.getElementById('fareTotal').textContent = `R${Number(total).toFixed(2)}`;
+  }
+
+  async function bookCab() {
+    const from = document.getElementById('from').value.trim();
+    const to   = document.getElementById('to').value.trim();
+    const dist = parseFloat(document.getElementById('distance').value);
+    if (!from || !to || !dist || !selectedType) { showAlert('Please fill in all fields and select a cab.', 'error'); return; }
+
+    showAlert('Booking your ride…', 'loading');
+    document.getElementById('bookBtn').disabled = true;
+    document.getElementById('confirmBox').classList.remove('show');
+
+    const url = `/cab/booking?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&typeOfCab=${selectedType}&distanceKm=${dist}`;
+
+    try {
+      const res = await fetch(url, { method: 'POST' });
+      let data = null;
+      try { data = await res.json(); } catch { try { data = await res.text(); } catch {} }
+
+      if (res.ok) {
+        clearAlert();
+        const info = CAB_INFO[selectedType];
+        const fare = typeof data === 'object' ? (data.fare ?? data.amount ?? data.total ?? info.rate * dist) : info.rate * dist;
+        const id   = typeof data === 'object' ? (data.id ?? data.bookingId ?? data.bookingID ?? null) : null;
+
+        document.getElementById('confirmBox').classList.add('show');
+        document.getElementById('cFrom').textContent = from;
+        document.getElementById('cTo').textContent   = to;
+        document.getElementById('cCab').textContent  = `${info.emoji} ${info.name}`;
+        document.getElementById('cDist').textContent = `${dist} km`;
+        document.getElementById('cFare').textContent = `R${Number(fare).toFixed(2)}`;
+        document.getElementById('cId').textContent   = id ? `Booking ID: ${id}` : '';
+
+        document.getElementById('bookBtn').textContent = '+ Book Another Ride';
+        document.getElementById('bookBtn').disabled = false;
+        document.getElementById('bookBtn').onclick  = resetForm;
+        document.getElementById('confirmBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        const errMsg = typeof data === 'object' ? (data.message ?? data.error ?? `Error ${res.status}`) : `Error ${res.status}`;
+        throw new Error(errMsg);
+      }
+    } catch (e) {
+      showAlert('Booking failed: ' + e.message, 'error');
+      document.getElementById('bookBtn').disabled = false;
+    }
+  }
+
+  function showAlert(msg, type) {
+    const el = document.getElementById('alertBox');
+    el.textContent = msg;
+    el.className = 'alert show ' + type;
+  }
+
+  function clearAlert() { document.getElementById('alertBox').className = 'alert'; }
+
+  function resetForm() {
+    document.getElementById('from').value = '';
+    document.getElementById('to').value   = '';
+    document.getElementById('distance').value = '';
+    document.querySelectorAll('.cab-tile').forEach(t => t.classList.remove('active'));
+    selectedType = null;
+    document.getElementById('fareBox').classList.remove('show');
+    document.getElementById('confirmBox').classList.remove('show');
+    clearAlert();
+    const btn = document.getElementById('bookBtn');
+    btn.disabled = true;
+    btn.textContent = 'Select a cab type to continue';
+    btn.onclick = bookCab;
+  }
+</script>
+</body>
+</html>
