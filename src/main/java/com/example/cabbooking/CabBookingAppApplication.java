@@ -1,4 +1,3 @@
-
 package com.example.cabbooking;
 
 import org.springframework.boot.SpringApplication;
